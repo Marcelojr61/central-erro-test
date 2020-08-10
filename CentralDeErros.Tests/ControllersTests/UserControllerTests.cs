@@ -65,16 +65,16 @@ namespace CentralDeErros.ControllersTests
             Assert.IsType<OkObjectResult>(action.Result);
         }
 
-        [Fact]
-        public void Update_ShouldReturnOkResult()
-        {
+        //[Fact]
+        //public void Update_ShouldReturnOkResult()
+        //{
 
-            //Act
-            var action = controller.Update(userList[0].Id);
+        //    //Act
+        //    var action = controller.Update(userList[0].Id);
 
-            //Assert
-            Assert.IsType<OkObjectResult>(action.Result);
-        }
+        //    //Assert
+        //    Assert.IsType<OkObjectResult>(action.Result);
+        //}
 
         [Fact]
         public void GetItems_ShouldReturnOkResult()

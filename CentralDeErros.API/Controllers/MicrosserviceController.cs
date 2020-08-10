@@ -4,10 +4,14 @@ using CentralDeErros.Services;
 using CentralDeErros.Transport;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace CentralDeErros.API.Controllers
 {
@@ -18,6 +22,7 @@ namespace CentralDeErros.API.Controllers
     {
         private MicrosserviceService _service;
         private IMapper _mapper;
+        
 
         public MicrosserviceController(MicrosserviceService service, IMapper mapper)
         {
@@ -42,13 +47,11 @@ namespace CentralDeErros.API.Controllers
             {
                 return NoContent();
             }
-            else
-            {
-                return Ok
-                    (_mapper.Map<MicrosserviceDTO>
-                    (_service.Fetch
-                    ((int)id)));
-            }
+            return Ok
+                (_mapper.Map<MicrosserviceDTO>
+                (_service.Fetch
+                ((int)id)));
+
         }
 
         // DELETE api/v1/microsservice/{id}
@@ -66,14 +69,11 @@ namespace CentralDeErros.API.Controllers
             {
                 return NoContent();
             }
-            else
-            {
-                return Ok
-                    (_mapper.Map<MicrosserviceDTO>
-                    (_service.RegisterOrUpdate
-                    ((microsservice))));
-            }
 
+            return Ok
+                (_mapper.Map<MicrosserviceDTO>
+                (_service.RegisterOrUpdate
+                (microsservice)));
         }
 
         // POST api/v1/microsservice
@@ -84,14 +84,12 @@ namespace CentralDeErros.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            else
-            {
-                return Ok(_mapper.Map<MicrosserviceDTO>
+           
+            return Ok(_mapper.Map<MicrosserviceDTO>
                 (_service.RegisterOrUpdate
                 (_mapper.Map<Microsservice>
                 ((value)))));
-            }
-        }
 
+        }
     }
 }

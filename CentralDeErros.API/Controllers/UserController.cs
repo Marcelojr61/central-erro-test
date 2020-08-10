@@ -22,6 +22,10 @@ namespace CentralDeErros.API.Controllers
             this.mapper = mapper;
         }
 
+        public UserController()
+        {
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<UserDTO>> GetAll() => Ok(mapper.Map<IEnumerable<UserDTO>>(service.List()));
 
@@ -53,7 +57,7 @@ namespace CentralDeErros.API.Controllers
         {
            if(ModelState.IsValid)
            {
-                mapper.Map<UserDTO>(service.Update(user));
+                service.Update(user);
                 return Ok();
            }
 

@@ -8,8 +8,11 @@ namespace CentralDeErros.Services
 {
     public class MicrosserviceService : ServiceBase<Microsservice>
     {
-        public MicrosserviceService(CentralDeErrosDbContext context) : base(context) 
+        private readonly TokenService _tokenService;
+
+        public MicrosserviceService(CentralDeErrosDbContext context, TokenService tokenService) : base(context) 
         {
+            _tokenService = tokenService;
         }
 
         public void Delete(int? id)
@@ -37,13 +40,11 @@ namespace CentralDeErros.Services
 
         public Microsservice RegisterOrUpdate(Microsservice microsservice)
         {
-            //geraTokenMicroservice = name... JTW ? KeyUser
-
-            //Separar... 
-
             _ = microsservice.Id == 0
                 ? Context.Microsservices.Add(microsservice)
                 : Context.Microsservices.Update(microsservice);
+
+           // _tokenService.GenerateToken(microsservice);
 
             Context.SaveChanges();
 
