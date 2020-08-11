@@ -1,11 +1,8 @@
-﻿using CentralDeErros.Core.Models;
+﻿using CentralDeErros.Model.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace CentralDeErros.Data.Maps
+namespace CentralDeErros.Model.Maps
 {
     public class UserMap : IEntityTypeConfiguration<User>
     {
@@ -22,19 +19,19 @@ namespace CentralDeErros.Data.Maps
 
             builder.Property(x => x.UserName)
                 .HasColumnName("username")
-                .HasColumnType("varchar")
+                .HasColumnType("varchar(100)")
                 .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(x => x.Email)
                 .HasColumnName("email")
-                .HasColumnType("varchar")
+                .HasColumnType("varchar(45)")
                 .HasMaxLength(45)
                 .IsRequired();
 
             builder.Property(x => x.Password)
                 .HasColumnName("password")
-                .HasColumnType("varchar")
+                .HasColumnType("varchar(255)")
                 .HasMaxLength(255)
                 .IsRequired();
 

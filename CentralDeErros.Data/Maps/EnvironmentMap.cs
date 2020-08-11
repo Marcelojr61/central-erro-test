@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
+using CentralDeErros.Model.Models;
 
 
-namespace CentralDeErros.Core.Models.Maps
+namespace CentralDeErros.Model.Maps
 {
-    class EnvironmentMap : IEntityTypeConfiguration<Environment>
+    public class EnvironmentMap : IEntityTypeConfiguration<Environment>
     {
         public void Configure(EntityTypeBuilder<Environment> builder)
         {
@@ -24,12 +24,12 @@ namespace CentralDeErros.Core.Models.Maps
             builder
                 .Property(x => x.Phase)
                 .HasColumnName("phase")
-                .HasColumnType("varchar")
+                .HasColumnType("varchar(32)")
                 .HasMaxLength(32)
                 .IsRequired();
 
             builder
-                .HasMany(x => x.Occurrences)
+                .HasMany(x => x.Errors)
                 .WithOne(x => x.Environment);
         }
     }

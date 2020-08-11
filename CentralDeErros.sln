@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CentralDeErros.Core", "Cent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CentralDeErros.Services", "CentralDeErros.Services\CentralDeErros.Services.csproj", "{1658F176-26F9-489C-8FD5-18A8C86711E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CentralDeErros.Data", "CentralDeErros.Data\CentralDeErros.Data.csproj", "{F8E543D1-74D1-4413-9CB5-342CA5421378}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CentralDeErros.Model", "CentralDeErros.Data\CentralDeErros.Model.csproj", "{F8E543D1-74D1-4413-9CB5-342CA5421378}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentralDeErros.Tests", "CentralDeErros.Tests\CentralDeErros.Tests.csproj", "{3430183E-342E-431A-B3EA-9BF66901BF9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CentralDeErros.Tests", "CentralDeErros.Tests\CentralDeErros.Tests.csproj", "{3430183E-342E-431A-B3EA-9BF66901BF9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CentralDeErros.Transport", "CentralDeErros.Transport\CentralDeErros.Transport.csproj", "{704E40B6-2930-4550-B92F-B02B5F5340B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{3430183E-342E-431A-B3EA-9BF66901BF9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3430183E-342E-431A-B3EA-9BF66901BF9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3430183E-342E-431A-B3EA-9BF66901BF9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{704E40B6-2930-4550-B92F-B02B5F5340B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{704E40B6-2930-4550-B92F-B02B5F5340B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{704E40B6-2930-4550-B92F-B02B5F5340B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{704E40B6-2930-4550-B92F-B02B5F5340B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

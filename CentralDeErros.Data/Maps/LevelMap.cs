@@ -1,11 +1,11 @@
-﻿using CentralDeErros.API.Models;
+﻿using CentralDeErros.Model.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
-namespace CentralDeErros.Data.Maps
+namespace CentralDeErros.Model.Maps
 {
-    class LevelMap : IEntityTypeConfiguration<Level>
+    public class LevelMap : IEntityTypeConfiguration<Level>
     {
         public void Configure(EntityTypeBuilder<Level> builder)
         {
@@ -24,7 +24,7 @@ namespace CentralDeErros.Data.Maps
             builder
                 .Property(x => x.Name)
                 .HasColumnName("name")
-                .HasColumnType("varvhar")
+                .HasColumnType("varchar(32)")
                 .HasMaxLength(32)
                 .IsRequired();
 
