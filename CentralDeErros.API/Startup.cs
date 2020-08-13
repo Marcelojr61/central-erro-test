@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 namespace CentralDeErros.API
 {
@@ -31,17 +33,11 @@ namespace CentralDeErros.API
 
             services.AddIdentityConfiguration(Configuration);
 
-           
-            services.AddScoped<ErrorService>();
-            services.AddScoped<EnvironmentService>();
-            services.AddScoped<LevelService>();
-            services.AddScoped<MicrosserviceService>();
-            services.AddScoped<ProfileService>();
-            services.AddScoped<TokenGeneratorService>();
+            services.AddJwtConfig(Configuration);
 
-            services.AddScoped<UserService>();
+            services.AddDependencyInjectionConfig();
 
-            services.AddSwaggerGen();
+            services.AddSwaggerConfig();
 
             services.AddAutoMapper(typeof(Startup));
 
@@ -55,19 +51,15 @@ namespace CentralDeErros.API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Central De Erros");
-            });
+            app.UseSwaggerConfig();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

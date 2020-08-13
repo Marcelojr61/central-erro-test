@@ -2,9 +2,10 @@
 using CentralDeErros.Services;
 using CentralDeErros.Transport;
 using Microsoft.AspNetCore.Mvc;
-using CentralDeErros.Model.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using CentralDeErros.Core.Extensions;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
 namespace CentralDeErros.API.Controllers
 {
@@ -31,8 +32,7 @@ namespace CentralDeErros.API.Controllers
             _tokenGeneratorService = tokenGeneratorService;
         }
 
-        // POST api/v1/signin
-        [HttpPost]
+        [HttpPost("createaccount")]
         public async Task<ActionResult> Post([FromBody] RegisterUserDTO value)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -46,8 +46,7 @@ namespace CentralDeErros.API.Controllers
                 await _signInManager.SignInAsync(user, false);
                 return Created(nameof(Post), await _tokenGeneratorService.TokenGenerator(user.Email));
             }
-
-            return BadRequest(value);
+            return BadRequest(result.Errors);
         }
 
         [HttpPost("login")]
@@ -59,13 +58,9 @@ namespace CentralDeErros.API.Controllers
 
             if (result.Succeeded) return Ok(await _tokenGeneratorService.TokenGenerator(loginDTO.Email));
 
-            if (result.IsLockedOut) return BadRequest(loginDTO);
+            if (result.IsLockedOut) return BadRequest(new { Message = "Limite de tentativas excedido! Tente novamente mais tarde." });
 
-            return BadRequest(loginDTO);
-
-            
+            return BadRequest( new { Message = "Usuário ou senha incorretos" });
         }
-
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CentralDeErros.Core.Extensions;
 using CentralDeErros.Services;
 using CentralDeErros.Transport;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,7 @@ using System.Linq;
 
 namespace CentralDeErros.API.Controllers
 {
-
+    [Authorize]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class EnvironmentController : ControllerBase
@@ -23,7 +24,6 @@ namespace CentralDeErros.API.Controllers
             _mapper = mapper;
         }
 
-        // GET api/v1/environment
         [HttpGet]
         public ActionResult<IEnumerable<EnvironmentDTO>> GetAllEnvironments()
         {
@@ -32,7 +32,6 @@ namespace CentralDeErros.API.Controllers
                 (_service.List()));  
         }
 
-        // GET api/v1/environment/{id}
         [HttpGet("{id}")]
         public ActionResult<EnvironmentDTO> GetEnviromentId(int? id)
         {
@@ -49,14 +48,14 @@ namespace CentralDeErros.API.Controllers
             }
         }
 
-        // DELETE api/v1/environment/{id}
+        [ClaimsAuthotize("Admin","Delete")]
         [HttpDelete("{id}")]
         public void DeleteEnvironmentId(int? id)
         {
             _service.Delete((int)id);
         }
 
-        // PUT api/v1/environment/{id}
+        [ClaimsAuthotize("Admin","Update")]
         [HttpPut("{id}")]
         public ActionResult<EnvironmentDTO> UpdateEnvironment(int? id, Model.Models.Environment environment)
         {
@@ -74,7 +73,7 @@ namespace CentralDeErros.API.Controllers
 
         }
 
-        // POST api/v1/environment
+        [ClaimsAuthotize("Admin","Create")]
         [HttpPost]
         public ActionResult<EnvironmentDTO> SaveEnvironment([FromBody] EnvironmentDTO value)
         {

@@ -1,6 +1,8 @@
 ﻿using CentralDeErros.Core;
 using CentralDeErros.Model.Models;
 using CentralDeErros.Services.Base;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,7 +73,15 @@ namespace CentralDeErros.Services
 
         public new Error Register(Error entry)
         {
-            
+            if (!CheckId<Level>(entry.LevelId))
+                throw new Exception("LevelId not found");
+
+            if (!CheckId<Microsservice>(entry.MicrosserviceId))
+                throw new Exception("MicrosserviceId not found");
+
+            if (!CheckId<Model.Models.Environment>(entry.EnviromentId))
+                throw new Exception("EnviromentId not found");
+
             Context.Add(entry);
             Context.SaveChanges();
             
