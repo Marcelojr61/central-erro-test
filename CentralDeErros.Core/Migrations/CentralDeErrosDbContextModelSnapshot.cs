@@ -59,11 +59,16 @@ namespace CentralDeErros.API.Migrations
                         .HasColumnName("error_date")
                         .HasColumnType("datetime");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnName("is_archived")
+                        .HasColumnType("bit");
+
                     b.Property<int>("LevelId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MicrosserviceId")
-                        .HasColumnType("int");
+                    b.Property<string>("MicrosserviceClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Origin")
                         .IsRequired()
@@ -83,7 +88,7 @@ namespace CentralDeErros.API.Migrations
 
                     b.HasIndex("LevelId");
 
-                    b.HasIndex("MicrosserviceId");
+                    b.HasIndex("MicrosserviceClientId");
 
                     b.ToTable("error");
                 });
@@ -109,11 +114,17 @@ namespace CentralDeErros.API.Migrations
 
             modelBuilder.Entity("CentralDeErros.Model.Models.Microsservice", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("ClientId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnName("client_id")
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450);
+
+                    b.Property<string>("ClientSecret")
+                        .IsRequired()
+                        .HasColumnName("client_secret")
+                        .HasColumnType("varchar(32)")
+                        .HasMaxLength(32);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -121,70 +132,9 @@ namespace CentralDeErros.API.Migrations
                         .HasColumnType("varchar(50)")
                         .HasMaxLength(50);
 
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnName("token")
-                        .HasColumnType("varchar(50)")
-                        .HasMaxLength(50);
-
-                    b.HasKey("Id");
+                    b.HasKey("ClientId");
 
                     b.ToTable("microservice");
-                });
-
-            modelBuilder.Entity("CentralDeErros.Model.Models.Profile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnName("type")
-                        .HasColumnType("varchar(45)")
-                        .HasMaxLength(45);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("profile");
-                });
-
-            modelBuilder.Entity("CentralDeErros.Model.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnName("email")
-                        .HasColumnType("varchar(45)")
-                        .HasMaxLength(45);
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnName("password")
-                        .HasColumnType("varchar(255)")
-                        .HasMaxLength(255);
-
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnName("username")
-                        .HasColumnType("varchar(100)")
-                        .HasMaxLength(100);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("user");
                 });
 
             modelBuilder.Entity("CentralDeErros.Model.Models.Error", b =>
@@ -203,16 +153,7 @@ namespace CentralDeErros.API.Migrations
 
                     b.HasOne("CentralDeErros.Model.Models.Microsservice", "Microsservice")
                         .WithMany("Errors")
-                        .HasForeignKey("MicrosserviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CentralDeErros.Model.Models.User", b =>
-                {
-                    b.HasOne("CentralDeErros.Model.Models.Profile", "Profile")
-                        .WithMany("Users")
-                        .HasForeignKey("ProfileId")
+                        .HasForeignKey("MicrosserviceClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

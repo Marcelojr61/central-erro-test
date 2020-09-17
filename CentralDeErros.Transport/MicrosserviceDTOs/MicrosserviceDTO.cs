@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace CentralDeErros.Transport
+namespace CentralDeErros.Transport.MicrosserviceDTOs
 {
     public class MicrosserviceDTO
     {
-        public int? Id { get; set; }
-
+        public Guid ClientId { get; set; }
         private string _name;
         [Required(ErrorMessage = "É obrigatório informar um microsservice", AllowEmptyStrings = false)]
         public string Name
@@ -16,7 +16,5 @@ namespace CentralDeErros.Transport
                 _name = value.ToLower();
             }
         }
-
-        public string Token { get; set; }
     }
 }

@@ -12,10 +12,11 @@ namespace CentralDeErros.Transport
         public string Details { get; set; }
         public DateTime ErrorDate { get; set; }
 
-        public int MicrosserviceId { get; set; }
+        public Guid MicrosserviceClientId { get; set; }
 
         public int EnviromentId { get; set; }
 
         public int LevelId { get; set; }
+        public bool IsArchived { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CentralDeErros.Core.Extensions;
 using CentralDeErros.Model.Models;
-using CentralDeErros.Services;
+using CentralDeErros.Services.Interfaces;
 using CentralDeErros.Transport;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,30 +18,45 @@ namespace CentralDeErros.API.Controllers
     [ApiController]
     public class ErrorController : ControllerBase
     {
-        private readonly ErrorService _service;
+        private readonly IErrorService _service;
         private readonly IMapper _mapper;
 
-        public ErrorController(ErrorService service, IMapper mapper)
+        public ErrorController(IErrorService service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
         }
 
+        
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public ActionResult<ErrorDTO> Get(int id)
         {
             return Ok(_mapper.Map<ErrorDTO>(_service.Fetch(id)));
         }
 
-        [HttpGet]
-        public IActionResult List(int? start, int? end)
+        [HttpGet("Microsservice/{clientId}")]
+        public ActionResult<IEnumerable<ErrorDTO>> GetByMicrosserviceClientId(Guid? clientId)
         {
-            return Ok(_mapper.Map<IEnumerable<ErrorDTO>>(_service.List(start, end)));
+            if (clientId is null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(_mapper.Map<IEnumerable<ErrorDTO>>(_service.SearchByMicrosservice((Guid)clientId)));
+            }
+        }
+
+        [ClaimsAuthorize("Admin", "Read")]
+        [HttpGet]
+        public ActionResult<IEnumerable<ErrorDTO>> List(int? start, int? end, bool archived = false)
+        {
+            return Ok(_mapper.Map<IEnumerable<ErrorDTO>>(_service.List(start, end, archived)));
         }
 
 
         [HttpPost]
-        public IActionResult Post([FromBody]ErrorEntryDTO entry)
+        public ActionResult<ErrorEntryDTO> Post([FromBody] ErrorEntryDTO entry)
         {
 
             try
@@ -51,42 +66,49 @@ namespace CentralDeErros.API.Controllers
             }
             catch (Exception exc)
             {
-
                 return BadRequest(exc.Message);
             }
         }
 
-        [ClaimsAuthotize("Admin","Update")]
+        [ClaimsAuthorize("Admin", "Update")]
         [HttpPut]
-        public IActionResult Put(ErrorEntryDTO entry)
+        public ActionResult<ErrorDTO> Put([FromBody] ErrorEntryDTO entry)
         {
-            if (entry.Id.HasValue && _service.CheckId<Error>(entry.Id.Value))
+            if (entry.Id.HasValue && _service.CheckError(entry.Id.Value))
             {
                 _service.Update(_mapper.Map<Error>(entry));
                 return Ok();
             }
 
 
-            return NotFound();
+            return BadRequest("Error not found");
         }
 
-        [ClaimsAuthotize("Admin","Delete")]
+        [HttpPut("Archive")]
+        public ActionResult Archive([FromBody] List<int> errorIdList)
+        {
+            var failed = new List<int>();
+
+            if (errorIdList != null)
+            {
+                failed =  _service.ArchiveById(errorIdList);
+            }
+
+            if (failed.Count > 0)
+            {
+                return NotFound(new { failedList = failed });
+            }
+
+            return Ok();
+        }
+
+        [ClaimsAuthorize("Admin", "Delete")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public ActionResult Delete(int id)
         {
             _service.Delete(id);
-            
-            return Ok();
-        }
-
-        [ClaimsAuthotize("Admin", "Delete")]
-        [HttpDelete]
-        public IActionResult Delete(ErrorEntryDTO entry)
-        {
-            _service.Delete(_mapper.Map<Error>(entry));
 
             return Ok();
         }
-        
     }
 }

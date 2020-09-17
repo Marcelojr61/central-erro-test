@@ -1,6 +1,7 @@
-﻿using CentralDeErros.API.Extensions;
+﻿using CentralDeErros.Core.Extensions;
 
 using CentralDeErros.Model.Models;
+using CentralDeErros.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace CentralDeErros.Services
 {
-    public class TokenGeneratorService
+    public class TokenGeneratorService : ITokenGeneratorService
     {
         private readonly AppSettings _appSettingsJWT;
         private readonly UserManager<IdentityUser> _userManager;
@@ -25,9 +26,9 @@ namespace CentralDeErros.Services
             _userManager = userManager;
         }
 
-        public async Task<string>TokenGenerator(string email)
+        public async Task<string>TokenGenerator(string username)
         {
-            var user = await _userManager.FindByNameAsync(email);
+            var user = await _userManager.FindByNameAsync(username);
             var claims = await _userManager.GetClaimsAsync(user);
             var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -56,6 +57,25 @@ namespace CentralDeErros.Services
 
             return tokenHandler.WriteToken(token);
 
+        }
+
+        public Object TokenGeneratorMicrosservice(string clientId)
+        {
+            var expiration = DateTime.UtcNow.AddDays(1);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettingsJWT.Secret);
+            var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, clientId)
+                }),
+                Issuer = _appSettingsJWT.Issuer,
+                Expires = expiration,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            }) ;
+
+            return new { token = tokenHandler.WriteToken(token), expirationDate = expiration };
         }
 
         private static long ToUnixEpochDate(DateTime date)

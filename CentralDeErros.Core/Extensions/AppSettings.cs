@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Threading.Tasks;
 
-namespace CentralDeErros.API.Extensions
+namespace CentralDeErros.Core.Extensions
 {
     public class AppSettings
     {

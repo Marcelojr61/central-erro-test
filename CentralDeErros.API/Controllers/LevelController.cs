@@ -2,11 +2,12 @@
 using CentralDeErros.Core.Extensions;
 using CentralDeErros.Model.Models;
 using CentralDeErros.Services;
+using CentralDeErros.Services.Interfaces;
 using CentralDeErros.Transport;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CentralDeErros.API.Controllers
 {
@@ -15,10 +16,10 @@ namespace CentralDeErros.API.Controllers
     [ApiController]
     public class LevelController : ControllerBase
     {
-        private LevelService _service;
-        private IMapper _mapper;
+        private readonly ILevelService _service;
+        private readonly IMapper _mapper;
 
-        public LevelController(LevelService service, IMapper mapper)
+        public LevelController(ILevelService service, IMapper mapper)
         {
             _service = service;
             _mapper = mapper;
@@ -33,7 +34,7 @@ namespace CentralDeErros.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<LevelDTO> GetEnviromentId(int? id)
+        public ActionResult<LevelDTO> GetLevelById(int? id)
         {
             if (id == null)
             {
@@ -48,46 +49,52 @@ namespace CentralDeErros.API.Controllers
             }
         }
 
-        [ClaimsAuthotize("Admin", "Delete")]
+        [ClaimsAuthorize("Admin", "Delete")]
         [HttpDelete("{id}")]
-        public void DeleteLevelId(int? id)
-        {
-            _service.Delete((int)id);
-        }
-
-        [ClaimsAuthotize("Admin", "Update")]
-        [HttpPut("{id}")]
-        public ActionResult<LevelDTO> UpdateLevel(int? id, Level level)
+        public ActionResult DeleteLevelById(int? id)
         {
             if (id == null)
             {
                 return NoContent();
             }
-            else
+
+            _service.Delete((int)id);
+
+            return Ok();
+        }
+
+        [ClaimsAuthorize("Admin", "Update")]
+        [HttpPut]
+        public ActionResult<LevelDTO> UpdateLevel([FromBody] LevelDTO level)
+        {
+            if (ModelState.IsValid)
             {
                 return Ok
                     (_mapper.Map<LevelDTO>
                     (_service.RegisterOrUpdate
-                    ((level))));
+                    (_mapper.Map<Level>(level))));
             }
-
-        }
-
-        [ClaimsAuthotize("Admin", "Create")]
-        [HttpPost]
-        public ActionResult<LevelDTO> SaveEnvironment([FromBody] LevelDTO value)
-        {
-            if (!ModelState.IsValid)
+            else
             {
                 return BadRequest(ModelState);
             }
-            else
+        }
+
+        [ClaimsAuthorize("Admin", "Create")]
+        [HttpPost]
+        public ActionResult<LevelDTO> SaveLevel([FromBody] LevelDTO value)
+        {
+            if (ModelState.IsValid)
             {
                 return Ok
                     (_mapper.Map<LevelDTO>
                     (_service.RegisterOrUpdate
                     (_mapper.Map<Level>
                     ((value)))));
+            }
+            else
+            {
+                return BadRequest(ModelState);
             }
         }
     }

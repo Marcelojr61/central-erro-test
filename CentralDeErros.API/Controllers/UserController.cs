@@ -1,11 +1,12 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using CentralDeErros.Model.Models;
-using CentralDeErros.Services;
 using CentralDeErros.Transport;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using CentralDeErros.Core.Extensions;
 
 namespace CentralDeErros.API.Controllers
 {
@@ -13,88 +14,73 @@ namespace CentralDeErros.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserService service;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UserController(UserService service, IMapper mapper)
+        public UserController(UserManager<IdentityUser> userManager, IMapper mapper)
         {
-            this.service = service; 
-            this.mapper = mapper;
+            _mapper = mapper;
+            _userManager = userManager;
         }
 
+        [ClaimsAuthorize("Admin", "Read")]
         [HttpGet]
-        public ActionResult<IEnumerable<UserDTO>> GetAll()
+        public ActionResult<IEnumerable<UserGetDTO>> GetAll()
         {
-            try
-            {
-                return Ok(mapper.Map<IEnumerable<UserDTO>>(service.List()));
-
-            }catch(NullReferenceException e)
-            {
-                return NoContent();
-            }
-            
-        } 
-
-        [HttpGet("{id}")] 
-        public ActionResult<UserDTO> Get(int? id) 
-        {   
-            if(ModelState.IsValid)
-            {
-                    User userFoundById = service.Fetch((int)id);        
-                    return Ok(mapper.Map<UserDTO>(userFoundById));
-            }
-
-            return NoContent();   
-                                    
-        } 
-
-     
-
-        [HttpDelete("{id}")]
-        public ActionResult<UserDTO> Delete(UserDTO entry) 
-        {
-
-            if(ModelState.IsValid)
-            {
-                service.Delete(mapper.Map<User>(entry)); 
-                return Ok();   
-            }
-
-            return NoContent();
-            
-        }   
-
-        [HttpPut("{id}")]
-        public ActionResult<UserDTO> Update(User user) 
-        {
-
-                if(ModelState.IsValid)
-                {
-                    return Ok(mapper.Map<UserDTO>(service.Update(user)));
-                }
-
-                return NoContent();  
-                                                
-        } 
-
-        [HttpPost]
-        public ActionResult<UserDTO> Create([FromBody]User value)
-        {
-
-                if(ModelState.IsValid) 
-                {
-                    var userModel = mapper.Map<User>(value);
-
-                    service.Register(userModel);
-
-                    return Ok(mapper.Map<UserDTO>(mapper.Map<UserDTO>(userModel)));
-                }
-
-                return NoContent();
-
-           
+            return Ok(_mapper.Map<IEnumerable<UserGetDTO>>(_userManager.Users.ToList()));
         }
 
+        [ClaimsAuthorize("Admin", "Read")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserGetDTO>> GetAsync(string id)
+        {
+            if (ModelState.IsValid)
+            {
+                return Ok(_mapper.Map<UserGetDTO>(await _userManager.FindByIdAsync(id)));
+            }
+            return NoContent();
+        }
+
+        [ClaimsAuthorize("Admin", "Delete")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync(string id)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var findById = await _userManager.FindByIdAsync(id);
+
+                var result = await _userManager.DeleteAsync(findById);
+
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors);
+                }
+                return Ok(result);
+            }
+            return NoContent();
+        }
+
+        [HttpPut()]
+        public async Task<ActionResult<UserGetDTO>> UpdateAsync([FromBody] UserUpdateDTO identityUser)
+        {
+            if (ModelState.IsValid)
+            {
+                var findBy = await _userManager.FindByIdAsync(identityUser.Id);
+
+                findBy.UserName = identityUser.Email;
+                findBy.Email = identityUser.Email;
+
+                var result = await _userManager.UpdateAsync(findBy);
+
+                if (!result.Succeeded)
+                {
+                    return BadRequest(result.Errors);
+                }
+
+                return Ok(_mapper.Map<UserGetDTO>(await _userManager.FindByIdAsync(identityUser.Id))); ;
+            }
+            return BadRequest();
+        }
     }
-} 
+}

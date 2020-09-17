@@ -10,7 +10,7 @@ namespace CentralDeErros.ModelsTests
 {
     public class EnvironmentModelTests : BaseModelTest
     {
-        public EnvironmentModelTests(CentralDeErrosDbContext context) : base(context)
+        public EnvironmentModelTests()
         {
         }
 

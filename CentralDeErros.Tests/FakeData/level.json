@@ -1,0 +1,14 @@
+[
+  {
+    "Id": 1,
+    "Name": "debug"
+  },
+  {
+    "Id": 2,
+    "Name": "warning"
+  },
+  {
+    "Id": 3,
+    "Name": "critical"
+  }
+]

@@ -37,4 +37,19 @@
     <ProjectReference Include="..\CentralDeErros.Services\CentralDeErros.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="FakeData\environment.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="FakeData\error.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="FakeData\level.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="FakeData\microsservice.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

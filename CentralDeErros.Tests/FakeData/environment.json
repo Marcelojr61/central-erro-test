@@ -1,0 +1,18 @@
+[
+  {
+    "Id": 1,
+    "Phase": "test"
+  },
+  {
+    "Id": 2,
+    "Phase": "producao"
+  },
+  {
+    "Id": 3,
+    "Phase": "orm"
+  },
+  {
+    "Id": 4,
+    "Phase": "development"
+  }
+]

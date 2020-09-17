@@ -49,9 +49,15 @@ namespace CentralDeErros.Model.Maps
                 .IsRequired();
 
             builder
+                .Property(k => k.IsArchived)
+                .HasColumnName("is_archived")
+                .HasColumnType("bit")
+                .IsRequired();
+
+            builder
                 .HasOne(k => k.Microsservice)
                 .WithMany(s => s.Errors)
-                .HasForeignKey(x => x.MicrosserviceId)
+                .HasForeignKey(x => x.MicrosserviceClientId)
                 .IsRequired();
 
             builder
@@ -65,8 +71,6 @@ namespace CentralDeErros.Model.Maps
                 .WithMany(s => s.Errors)
                 .HasForeignKey(b => b.LevelId)
                 .IsRequired();
-
-
         }
     }
 }

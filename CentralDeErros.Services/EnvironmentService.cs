@@ -1,11 +1,12 @@
 ﻿using CentralDeErros.Core;
 using CentralDeErros.Services.Base;
+using CentralDeErros.Services.Interfaces;
 using System;
 using System.Linq;
 
 namespace CentralDeErros.Services
 {
-    public class EnvironmentService:ServiceBase<Model.Models.Environment>
+    public class EnvironmentService:ServiceBase<Model.Models.Environment>, IEnvironmentService
     {
         public EnvironmentService(CentralDeErrosDbContext context) : base(context) 
         {

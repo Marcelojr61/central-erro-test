@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CentralDeErros.Core\CentralDeErros.Core.csproj" />
+    <ProjectReference Include="..\CentralDeErros.Data\CentralDeErros.Model.csproj" />
   </ItemGroup>
 
 </Project>

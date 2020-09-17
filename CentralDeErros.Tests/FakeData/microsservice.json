@@ -1,0 +1,28 @@
+[
+  {
+    "ClientId": "031c156c-c072-4793-a542-4d20840b8031",
+    "Name": "microsservice1",
+    "ClientSecret": "0415d52cf900deeac968261f8a69d7da"
+  },
+  {
+    "ClientId": "3691b3e5-c411-4fd2-93d4-11a081552fb3",
+    "Name": "microsservice2",
+    "ClientSecret": "228e4b7d45493aaacb0093cb1978b03f"
+  },
+  {
+    "ClientId": "87b16267-2062-49bc-9872-ef3aa1d21e21",
+    "Name": "microsservice3",
+    "ClientSecret": "ad99c7654edf277750ab014e494363c4"
+  },
+  {
+    "ClientId": "2b49c2d5-3b93-4568-ab1b-6399fb0ba3ae",
+    "Name": "microsservice4",
+    "ClientSecret": "0e8a28487646fb6083136ee10477a8eb"
+  },
+  {
+    "ClientId": "65d65c94-9de0-4f5a-89de-6abd6309c9cc",
+    "Name": "microsservice5",
+    "ClientSecret": "c1578bd044d30d8e116f376864d5d1b8"
+  }
+
+]

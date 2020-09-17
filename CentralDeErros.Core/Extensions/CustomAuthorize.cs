@@ -19,9 +19,9 @@ namespace CentralDeErros.Core.Extensions
         }
     }
 
-    public class ClaimsAuthotizeAttribute : TypeFilterAttribute
+    public class ClaimsAuthorizeAttribute : TypeFilterAttribute
     {
-        public ClaimsAuthotizeAttribute(string claimName, string claimValue) : base(typeof(RequisitoClaimFilter))
+        public ClaimsAuthorizeAttribute(string claimName, string claimValue) : base(typeof(RequisitoClaimFilter))
         {
             Arguments = new object[] { new Claim(claimName, claimValue) };
         }

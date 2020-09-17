@@ -4,8 +4,11 @@ using CentralDeErros.Transport;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using CentralDeErros.Transport.MicrosserviceDTOs;
 using CentralDeErros.Core.Extensions;
 using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
+using CentralDeErros.Model.Models;
+using CentralDeErros.Services.Interfaces;
 
 namespace CentralDeErros.API.Controllers
 {
@@ -13,54 +16,78 @@ namespace CentralDeErros.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<IdentityUser> _signInUserManager;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly UserService _service;
+        private readonly IMicrosserviceService _microsserviceService;
         private readonly IMapper _mapper;
-        private readonly TokenGeneratorService _tokenGeneratorService;
+        private readonly ITokenGeneratorService _tokenGeneratorService;
 
-        public AuthController(UserService service, IMapper mapper, 
-                              SignInManager<IdentityUser> signInManager, 
-                              UserManager<IdentityUser> userManager, 
-                              TokenGeneratorService tokenGeneratorService)
+        public AuthController(IMicrosserviceService microsserviceService,
+                              IMapper mapper,
+                              SignInManager<IdentityUser> signInUserManager,
+                              UserManager<IdentityUser> userManager,
+                              ITokenGeneratorService tokenGeneratorService)
 
         {
-            _service = service;
+            _microsserviceService = microsserviceService;
             _mapper = mapper;
-            _signInManager = signInManager;
+            _signInUserManager = signInUserManager;
             _userManager = userManager;
             _tokenGeneratorService = tokenGeneratorService;
         }
 
-        [HttpPost("createaccount")]
+        [HttpPost("CreateUserAccount")]
         public async Task<ActionResult> Post([FromBody] RegisterUserDTO value)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var user = _mapper.Map<IdentityUser>((value));
-
+            user.UserName = user.Email;
             var result = await _userManager.CreateAsync(user, value.Password);
 
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, false);
-                return Created(nameof(Post), await _tokenGeneratorService.TokenGenerator(user.Email));
+                await _signInUserManager.SignInAsync(user, false);
+                return Created(
+                    nameof(Post),
+                    new { token = await _tokenGeneratorService.TokenGenerator(user.Email) }
+                );
             }
             return BadRequest(result.Errors);
         }
 
-        [HttpPost("login")]
-        public async Task<ActionResult> Login(LoginDTO loginDTO)
+        [HttpPost("UserLogin")]
+        public async Task<ActionResult> UserLogin(LoginDTO loginDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var result = await _signInManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, false, true);
+            var result = await _signInUserManager.PasswordSignInAsync(loginDTO.Email, loginDTO.Password, false, true);
 
-            if (result.Succeeded) return Ok(await _tokenGeneratorService.TokenGenerator(loginDTO.Email));
+            if (result.Succeeded) return Ok(new { token = await _tokenGeneratorService.TokenGenerator(loginDTO.Email) });
 
             if (result.IsLockedOut) return BadRequest(new { Message = "Limite de tentativas excedido! Tente novamente mais tarde." });
 
-            return BadRequest( new { Message = "Usuário ou senha incorretos" });
+            return BadRequest(new { Message = "Usuário ou senha incorretos" });
+        }
+
+        [HttpPost("MicrosserviceLogin")]
+        public ActionResult MicrosserviceLogin(MicrosserviceLoginDTO microsserviceLogin)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            bool result = _microsserviceService.ValidateMicrosserviceCredentials(_mapper.Map<Microsservice>(microsserviceLogin));
+            if (result)
+            {
+                return Ok(_tokenGeneratorService.TokenGeneratorMicrosservice(microsserviceLogin.ClientId.ToString()));
+            }
+            //if (result.IsLockedOut) return BadRequest(new { Message = "Limite de tentativas excedido! Tente novamente mais tarde." });
+            else
+            {
+                return BadRequest(new { Message = "ClientId ou ClientSecret incorretos" });
+            }
         }
     }
 }

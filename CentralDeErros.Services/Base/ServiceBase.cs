@@ -1,19 +1,21 @@
 ﻿using CentralDeErros.Core;
+using CentralDeErros.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-
+using Microsoft.EntityFrameworkCore;
 namespace CentralDeErros.Services.Base
 {
-    public class ServiceBase<T> : IDisposable where T : class
+    public class ServiceBase<T> : IServiceBase<T>, IDisposable where T : class
     {
         public CentralDeErrosDbContext Context { get; private set; }
 
         public ServiceBase(CentralDeErrosDbContext context)
         {
             Context = context;
+            Context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public virtual IQueryable<T> List()
@@ -82,7 +84,6 @@ namespace CentralDeErros.Services.Base
             {
                 Context = null;
             }
-
         }
     }
 }

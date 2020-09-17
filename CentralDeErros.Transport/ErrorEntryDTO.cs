@@ -20,8 +20,8 @@ namespace CentralDeErros.Transport
         [Required(ErrorMessage = "{0} is Required")]
         public string Details { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "{0} is Required")]
-        public int MicrosserviceId { get; set; }
+        [Required(ErrorMessage = "{0} is Required")]
+        public Guid? MicrosserviceClientId { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "{0} is Required")]
         public int EnviromentId { get; set; }

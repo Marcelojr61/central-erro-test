@@ -1,4 +1,4 @@
-﻿using CentralDeErros.API.Extensions;
+﻿using CentralDeErros.Core.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

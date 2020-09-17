@@ -10,8 +10,6 @@ namespace CentralDeErros.Core
         public DbSet<Microsservice> Microsservices { get; set; }
         public DbSet<Error> Errors{ get; set; }
         public DbSet<Level> Levels { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Profile> Profiles { get; set; }
         public DbSet<Environment> Environments { get; set; }
 
 
@@ -25,8 +23,6 @@ namespace CentralDeErros.Core
             builder.ApplyConfiguration(new MicrosserviceMap());
             builder.ApplyConfiguration(new ErrorMap());
             builder.ApplyConfiguration(new LevelMap());
-            builder.ApplyConfiguration(new UserMap());
-            builder.ApplyConfiguration(new ProfileMap());
             builder.ApplyConfiguration(new EnvironmentMap());
         }
     }

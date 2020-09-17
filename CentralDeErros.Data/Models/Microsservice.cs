@@ -10,9 +10,9 @@ namespace CentralDeErros.Model.Models
             Errors = new HashSet<Error>();
         }
 
-        public int Id { get; set; }
+        public Guid ClientId { get; set; }
+        public string ClientSecret { get; set; }
         public string Name { get; set; }
-        public string Token { get; set; }
 
         public ICollection<Error> Errors { get; set; }
     }

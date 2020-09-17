@@ -1,16 +1,18 @@
 ﻿using CentralDeErros.Core;
 using CentralDeErros.Model.Models;
 using CentralDeErros.Services.Base;
+using CentralDeErros.Services.Interfaces;
 using System;
 using System.Linq;
 
 namespace CentralDeErros.Services
 {
-    public class LevelService : ServiceBase<Level>
+    public class LevelService : ServiceBase<Level>, ILevelService
     {
         public LevelService(CentralDeErrosDbContext context) : base(context) 
         {
         }
+
         public void Delete(int? id)
         {
             if (id == null)

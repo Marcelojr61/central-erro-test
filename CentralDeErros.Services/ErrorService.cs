@@ -1,16 +1,14 @@
 ﻿using CentralDeErros.Core;
 using CentralDeErros.Model.Models;
 using CentralDeErros.Services.Base;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.IIS;
+using CentralDeErros.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CentralDeErros.Services
 {
-    public class ErrorService : ServiceBase<Error>
+    public class ErrorService : ServiceBase<Error>, IErrorService
     {
         public ErrorService(CentralDeErrosDbContext context) : base(context)
         {
@@ -23,10 +21,12 @@ namespace CentralDeErros.Services
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        public ICollection<Error> List(int? start, int? end)
+        public ICollection<Error> List(int? start, int? end, bool archived)
         {
-            var response = Context.Errors
-                .Skip(start.HasValue ? start.Value : 0);
+            var response = Context
+                                .Errors
+                                .Where(x => x.IsArchived == archived)
+                                .Skip(start.HasValue?start.Value : 0);
 
             if(end.HasValue)
             {
@@ -59,6 +59,17 @@ namespace CentralDeErros.Services
                 .ToList();
         }
 
+        /// <summary>
+        /// Search based on Microsservice ClientId
+        /// </summary>
+        /// <param name="microsserviceClientId"></param>
+        /// <returns></returns>
+        public ICollection<Error> SearchByMicrosservice(Guid microsserviceClientId)
+        {
+            return List(x => x.MicrosserviceClientId == microsserviceClientId)
+                .ToList();
+        }
+
 
         /// <summary>
         /// Search between a given DateTime
@@ -73,26 +84,46 @@ namespace CentralDeErros.Services
 
         public new Error Register(Error entry)
         {
-            if (!CheckId<Level>(entry.LevelId))
+            if (!Context.Levels.Any(x => x.Id == entry.LevelId))
                 throw new Exception("LevelId not found");
 
-            if (!CheckId<Microsservice>(entry.MicrosserviceId))
-                throw new Exception("MicrosserviceId not found");
+            if (!Context.Microsservices.Any(x => x.ClientId == entry.MicrosserviceClientId))
+                throw new Exception("MicrosserviceClientId not found");
 
-            if (!CheckId<Model.Models.Environment>(entry.EnviromentId))
+            if (!Context.Environments.Any(x => x.Id == entry.EnviromentId))
                 throw new Exception("EnviromentId not found");
 
+            entry.IsArchived = false;
+            
             Context.Add(entry);
             Context.SaveChanges();
-            
 
             return entry;
         }
 
-
-        public bool CheckId<T>(int id) where T : class
+        public List<int> ArchiveById(List<int> errorIdList)
         {
-            return Context.Set<T>().Find(id) != null;
+            var failed = new List<int>();
+            foreach (var errorId in errorIdList)
+            {
+                if (!Context.Errors.Any(x => x.Id == errorId))
+                {
+                    failed.Add(errorId);
+                }
+                else
+                {
+                    var error = Fetch(errorId);
+                    error.IsArchived = true;
+                    Update(error);
+                }
+            }
+            return failed;
         }
+
+        public bool CheckError(int id)
+        {
+            return Context.Errors.Any(x => x.Id == id);
+        }
+
     }
 }
